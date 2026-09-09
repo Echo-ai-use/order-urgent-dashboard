@@ -542,10 +542,10 @@
     </div>
   </div>
 
-  <!-- 昨日总结 (T-1) -->
+  <!-- 每日总结 (默认今天 T-0, 今天无数据时自动回退到最新一天) -->
   <div class="summary-card" id="summaryCard">
     <div class="summary-head">
-      <h2>📋 昨日总结</h2>
+      <h2>📋 <span id="sumTitle">每日总结</span></h2>
       <span class="summary-date" id="sumDate">—</span>
     </div>
     <p class="summary-lead" id="sumLead">—</p>
@@ -5789,15 +5789,19 @@
       renderDay(defDay);
     }
 
-    // ========== 昨日总结 (T-1) ==========
+    // ========== 每日总结 (默认今天 T-0) ==========
     (function () {
       if (!data || data.length < 2) return;
-      // 总结固定取 T-1(昨日 = 9.8), 与数据里是否含今天无关, 也不跳过加急为0的日期
-      let idx = data.findIndex(d => d.date === "9.8");
+      // 总结取今天(9.9); 今天还没数据时自动回退到最新一天, 不跳过加急为0的日期
+      let idx = data.findIndex(d => d.date === "9.9");
       if (idx < 0) idx = data.length - 1;   // 兜底: 找不到就取最后一天
       if (idx < 1) return;
-      const t1 = data[idx];                          // 昨日
-      const t0 = data[idx - 1];                      // 前日
+      const t1 = data[idx];                          // 总结日(默认今天)
+      const t0 = data[idx - 1];                      // 对比日(前一天)
+      const isToday = (t1.date === "9.9");
+      const lbl1 = isToday ? "今日" : "昨日";          // 总结日称谓
+      const lbl0 = isToday ? "昨日" : "前日";          // 对比日称谓
+      document.getElementById("sumTitle").textContent = lbl1 + "总结";
       const delta = t1.urgent - t0.urgent;
       const rDelta = t1.urgent_ratio - t0.urgent_ratio;
       const word = delta > 0 ? "上涨" : delta < 0 ? "下降" : "持平";
@@ -5806,13 +5810,13 @@
         ? `（${delta >= 0 ? "+" : ""}${(delta / t0.urgent * 100).toFixed(1)}%）` : "";
       const ppTxt = `，占比 ${rDelta >= 0 ? "+" : ""}${rDelta.toFixed(2)} pp`;
 
-      document.getElementById("sumDate").textContent = `昨日 ${t1.date}`;
+      document.getElementById("sumDate").textContent = `${lbl1} ${t1.date}`;
       document.getElementById("sumLead").innerHTML =
-        `昨日 <b>${t1.date}</b> 累计发货订单 <b>${t1.total.toLocaleString()}</b> 单，` +
+        `${lbl1} <b>${t1.date}</b> 累计发货订单 <b>${t1.total.toLocaleString()}</b> 单，` +
         `其中正常订单 <b>${t1.normal.toLocaleString()}</b> 单，` +
         `加急订单 <b class="hl">${t1.urgent.toLocaleString()}</b> 单，` +
         `加急订单占比 <b class="hl">${t1.urgent_ratio.toFixed(2)}%</b>，` +
-        `相比前日 <b>${t0.date}</b> ` +
+        `相比${lbl0} <b>${t0.date}</b> ` +
         `<span class="${cls}">${word} ${Math.abs(delta).toLocaleString()} 单${pctTxt}</span>${ppTxt}。`;
 
       const renderList = (elId, rows) => {
