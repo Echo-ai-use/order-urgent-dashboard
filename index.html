@@ -8301,6 +8301,7 @@
     Chart.defaults.font.family = '-apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
     Chart.defaults.color = '#a5c8e0';
     Chart.defaults.borderColor = 'rgba(0, 240, 255, 0.14)';
+    Chart.defaults.plugins.datalabels = { color: '#ffffff', font: { weight: 'bold' } };
     Chart.register(ChartDataLabels);
 
     // ========== 趋势图（双 Y 轴） ==========
@@ -8321,7 +8322,7 @@
               display: true,
               anchor: "end",
               align: "start",
-              color: "#1e3a8a",
+              color: "#ffffff",
               font: { weight: "bold", size: 10 },
               formatter: (v) => v >= 1000 ? (v / 1000).toFixed(1) + "k" : v,
             },
@@ -8339,7 +8340,7 @@
               display: true,
               anchor: "end",
               align: "start",
-              color: "#7f1d1d",
+              color: "#ffffff",
               font: { weight: "bold", size: 10 },
               formatter: (v) => v >= 1000 ? (v / 1000).toFixed(1) + "k" : v,
             },
@@ -8361,7 +8362,7 @@
             datalabels: {
               align: "top",
               anchor: "end",
-              color: "#f59e0b",
+              color: "#ffffff",
               font: { weight: "bold", size: 11 },
               formatter: (v) => v.toFixed(1) + "%",
             },
